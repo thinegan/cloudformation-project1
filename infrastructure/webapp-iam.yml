@@ -1,0 +1,102 @@
+# Note, this is a basic use of Cloudformation with disregard for Security Group Access
+# You should always update Security Group Access with your own IP Address to ensure your instances security.
+#
+# How to validate template
+# aws cloudformation validate-template --template-body file:////path//cloudformation//Nested//security-group.yml
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    Policy to Allow EC2 instance full access to S3 & CloudWatch.
+    Policy to Allow EC2 VPC Logs to CloudWatch
+
+Resources:
+
+  S3CWAccess:
+    Type: "AWS::IAM::Role"
+    Properties:
+      ManagedPolicyArns: 
+        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+
+  # AWS::IAM::InstanceProfile
+  # Creates an AWS Identity and Access Management (IAM) Instance Profile that can be used with IAM Roles for EC2 Instances.
+  S3CWAccessInstanceProfile: 
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Path: "/"
+      Roles: 
+        - 
+          Ref: "S3CWAccess"
+
+
+  VPCLogAccess:
+    Type: "AWS::IAM::Role"
+    Properties:
+      # Update Inline or Custom Policy
+      Policies:
+        - 
+          PolicyName: "Custom-VPC-Log"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                - "logs:CreateLogGroup"
+                - "logs:CreateLogStream"
+                - "logs:PutLogEvents"
+                - "logs:DescribeLogGroups"
+                - "logs:DescribeLogStreams"
+                Resource: "*"
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "vpc-flow-logs.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+
+  # AWS::IAM::InstanceProfile
+  # Creates an AWS Identity and Access Management (IAM) Instance Profile that can be used with IAM Roles for EC2 Instances.
+  VPCLogAccessInstanceProfile: 
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Path: "/"
+      Roles: 
+        - 
+          Ref: "VPCLogAccess"
+
+Outputs:
+  S3CWAccessInstanceProfile:
+    Description: "Policy to Allow EC2 instance full access to S3 & CloudWatch"
+    Value: !Ref "S3CWAccessInstanceProfile"
+
+  VPCLogAccessInstanceProfile:
+    Description: "Policy to Allow EC2 VPC Logs to CloudWatch"
+    Value: !Ref "VPCLogAccessInstanceProfile"
+    
+  VPCFlowLogRoleArn:
+    Description: "Arn VPC Logs to CloudWatch"
+    Value:
+      Fn::GetAtt:
+      - "VPCLogAccess"
+      - "Arn"
+
+
+
+

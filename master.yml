@@ -1,0 +1,122 @@
+# Note : The Cloudformation Security Group IP address is open by default (testing purpose).
+# You should update Security Group Access with your own IP Address to ensure your instances security.
+#
+# Prerequisites
+# Before you can start this process, you need the following:
+# - Your AWS account must have one VPC available to be created in the selected region
+# - Amazon EC2 key pair
+# - Installed Domain in Route 53.
+# - Installed Certificate (in your selected region & also in us-east-1) 
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This is a master template to create a Web Application Architecture.
+    The following task will be built in this template.
+    - Custom VPC with Private and Public Subnet spread across 2 Availability Zones.
+    - Internet Gateway, with a default route on the public subnets.
+    - NAT Gateways (In one Public AZ) and route to private subnets.
+
+    Last Modified: 2nd April 2017
+    Author: Thinegan Ratnam <thinegan@thinegan.com>
+
+###############################################################################################################
+Parameters: 
+
+  PMOfficeIP:
+    Default: "0.0.0.0/0"
+    Description: "Update this with your own office/home public ip address"
+    Type: "String"
+
+  PMServerEnv:
+    Default: "dev"
+    Description: "Server Environment name, either dev or prod."
+    Type: "String"
+    MinLength: '1'
+    MaxLength: '255'
+    AllowedValues: 
+      - "dev"
+      - "prod"
+    ConstraintDescription: "Specify either 'dev' or 'prod'."
+
+###############################################################################################################
+# For any additional region & Env, you can add by yourself below.
+Mappings:
+  EnvMap:
+    dev:
+      # Auto-Scaling Setting (Min, Max, Desired)
+      ASMIN: '1'
+      ASMAX: '1'
+      ASDES: '1'
+    prod:
+      ASMIN: '2'
+      ASMAX: '4'
+      ASDES: '2'
+
+  # Mapping Supports for the following Regions & Service Environment
+  #
+  # US East (N. Virginia)     = us-east-1
+  # US East (Ohio)            = us-east-2
+  # US West (N. California)   = us-west-1
+  # US West (Oregon)          = us-west-2
+  # Asia Pacific (Tokyo)      = ap-northeast-1
+  # Asia Pacific (Singapore)  = ap-southeast-1
+  # Asia Pacific (Sydney)     = ap-southeast-2
+
+  RegionMap:
+    us-east-1:
+      # AMI Instance - Amazon Linux AMI 2016.09.1 (HVM), SSD Volume Type - ami-dc9339bf (Free tier eligible)
+      AMI: "ami-0b33d91d"
+      # AStorage - The storage class to which you want the object to transition.
+      AStorage: "GLACIER"
+      # Update your own cert ARN HERE!
+      CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
+
+    us-east-2:
+      AMI: "ami-c55673a0"
+      AStorage: "GLACIER"
+      CertARN: "arn:aws:acm:us-east-2:370888776060:certificate/893d447c-4f33-4585-9a48-78cade65e46d"
+
+    us-west-1:
+      AMI: "ami-165a0876"
+      AStorage: "GLACIER"
+      CertARN: "arn:aws:acm:us-west-1:370888776060:certificate/d05918e0-7646-4fc5-8405-025732b31d57"
+
+    us-west-2:
+      AMI: "ami-f173cc91"
+      AStorage: "GLACIER"
+      CertARN: "arn:aws:acm:us-west-2:370888776060:certificate/97648617-e7ab-4628-ba08-1d2f0ffce058"
+
+    ap-northeast-1:
+      AMI: "ami-56d4ad31"
+      AStorage: "GLACIER"
+      CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/4696461e-df6b-4000-963b-68c1628f0bac"
+
+    ap-southeast-1:
+      AMI: "ami-dc9339bf"
+      AStorage: "STANDARD_IA"
+      CertARN: "arn:aws:acm:ap-southeast-1:370888776060:certificate/b06aa290-bb09-4fee-9e09-864c4cc8cc98"
+
+    ap-southeast-2:
+      AMI: "ami-1c47407f"
+      AStorage: "GLACIER"
+      CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/4696461e-df6b-4000-963b-68c1628f0bac"
+
+###############################################################################################################
+Resources:
+
+  MyRoleAccess:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-iam.yml"
+      TimeoutInMinutes: '5'
+
+
+
+
+
+
+
+
+
+
