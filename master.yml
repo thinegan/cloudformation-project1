@@ -64,12 +64,14 @@ Mappings:
       ASMAX: '1'
       ASDES: '1'
       WEBDOMAIN: "devel.kasturicookies.com"
+      DOMAIN1: "kasturicookies.com"
 
     prod:
       ASMIN: '2'
       ASMAX: '4'
       ASDES: '2'
       WEBDOMAIN: "www.kasturicookies.com"
+      DOMAIN1: "kasturicookies.com"
 
   # Mapping Supports for the following Regions & Service Environment
   #
@@ -254,16 +256,17 @@ Resources:
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
         PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+        PMDOMAIN1: !FindInMap ["EnvMap", !Ref "PMServerEnv", "DOMAIN1"]
 
 
 Outputs:
   Webserver:
-    Description: "Web Server ELB Url"
+    Description: "Web Server Site"
     Value:
       Fn::Join:
         - ''
         - - "http://"
-          - !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
+          - !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
           - "/"
 
 
