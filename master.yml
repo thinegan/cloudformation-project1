@@ -212,7 +212,7 @@ Resources:
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
 
-  MyAutoScaling:
+  MyWEBAutoScaling:
     Type: "AWS::CloudFormation::Stack"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-webserver.yml"
@@ -232,6 +232,29 @@ Resources:
         PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
 
+  MyCloudWatch:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-cloudwatch.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMWebScalingGroup: !GetAtt "MyWEBAutoScaling.Outputs.WebScalingGroup"
+        PMWebServerScaleUpPolicy: !GetAtt "MyWEBAutoScaling.Outputs.WebServerScaleUpPolicy"
+        PMWebServerScaleDownPolicy: !GetAtt "MyWEBAutoScaling.Outputs.WebServerScaleDownPolicy"
+        PMAppScalingGroup: !GetAtt "MyAPPAutoScaling.Outputs.AppScalingGroup"
+        PMAPPServerScaleUpPolicy: !GetAtt "MyAPPAutoScaling.Outputs.APPServerScaleUpPolicy"
+        PMAPPServerScaleDownPolicy: !GetAtt "MyAPPAutoScaling.Outputs.APPServerScaleDownPolicy"
+
+
+Outputs:
+  Webserver:
+    Description: "Web Server ELB Url"
+    Value:
+      Fn::Join:
+        - ''
+        - - "http://"
+          - !GetAtt "MyWEBELB.Outputs.WEBLoadBalancerUrl"
+          - "/"
 
 
 
