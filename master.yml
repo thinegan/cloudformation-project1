@@ -212,5 +212,27 @@ Resources:
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
 
+  MyAutoScaling:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-webserver.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMKeyName: !Ref "PMKeyName"
+        PMInstanceType: !Ref "PMInstanceType"
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMProxyHostSG: !GetAtt "MySecurityGroup.Outputs.ProxyHostSG"
+        PMWEBLoadBalancer: !GetAtt "MyWEBELB.Outputs.WEBLoadBalancer"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMAPPLoadBalancerUrl: !GetAtt "MyAPPELB.Outputs.APPLoadBalancerUrl"
+        PMASMIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMIN"]
+        PMASMAX: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMAX"]
+        PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+
+
+
 
 

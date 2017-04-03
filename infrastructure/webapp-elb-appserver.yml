@@ -60,7 +60,7 @@ Resources:
         Target: "TCP:9000"
         Timeout: '5'
         UnhealthyThreshold: '6'
-      LoadBalancerName: "MyAPPELB"
+      LoadBalancerName: !Sub "${PMServerEnv}-AppELB"
       Listeners:
       - InstancePort: '9000'
         InstanceProtocol: "TCP"
