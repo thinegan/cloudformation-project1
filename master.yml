@@ -139,5 +139,15 @@ Resources:
         PMPrivateSubnet2CIDR: "10.0.4.0/24"
         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
+  SecurityGroup:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-securitygroup.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMOWNIP: !Ref "PMOWNIP"
+        PMVPC: !GetAtt "MyVPC.Outputs.VPC"
+        PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
 
