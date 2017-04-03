@@ -29,6 +29,19 @@ Parameters:
     Description: "Update this with your own office/home public ip address"
     Type: "String"
 
+  PMKeyName:
+    Default: "MyEC2Key"
+    Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key."
+    Type: "String" 
+
+  PMInstanceType: 
+    Description: "Enter t2.micro or m1.small. Default is t2.micro."
+    Type: "String"
+    Default: "t2.micro"
+    AllowedValues: 
+      - "t2.micro"
+      - "m1.small"
+
   PMServerEnv:
     Default: "dev"
     Description: "Server Environment name, either dev or prod."
@@ -45,15 +58,18 @@ Parameters:
 # For any additional region & Env, you can add by yourself below.
 Mappings:
   EnvMap:
+
     dev:
-      # Auto-Scaling Setting (Min, Max, Desired)
       ASMIN: '1'
       ASMAX: '1'
       ASDES: '1'
+      WEBDOMAIN: "devel.kasturicookies.com"
+
     prod:
       ASMIN: '2'
       ASMAX: '4'
       ASDES: '2'
+      WEBDOMAIN: "www.kasturicookies.com"
 
   # Mapping Supports for the following Regions & Service Environment
   #
@@ -139,7 +155,7 @@ Resources:
         PMPrivateSubnet2CIDR: "10.0.4.0/24"
         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
-  SecurityGroup:
+  MySecurityGroup:
     Type: "AWS::CloudFormation::Stack"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-securitygroup.yml"
@@ -149,5 +165,39 @@ Resources:
         PMOWNIP: !Ref "PMOWNIP"
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
+
+  MyAPPELB:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-elb-appserver.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMAPPELBSG: !GetAtt "MySecurityGroup.Outputs.APPELBSG"
+        PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+
+  MyAPPAutoScaling:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-appserver.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMKeyName: !Ref "PMKeyName"
+        PMInstanceType: !Ref "PMInstanceType"
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMAPPHostSG : !GetAtt "MySecurityGroup.Outputs.APPHostSG"
+        PMAPPLoadBalancer: !GetAtt "MyAPPELB.Outputs.APPLoadBalancer"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+        PMASMIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMIN"]
+        PMASMAX: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMAX"]
+        PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+
+
 
 
