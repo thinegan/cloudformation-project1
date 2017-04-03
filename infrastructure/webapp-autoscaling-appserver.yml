@@ -1,0 +1,190 @@
+# Note, the development environment will only spin a min of 1 instance (Not HA Support)
+# The production environment will spin a min of 2 instance (HA support)
+# You can adjust the ASMIN, ASMAX, ASDES at the master.yml file
+# to meet your instances spin numbers.
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This template deploys an AutoScaling Launch Config and Group
+
+Parameters: 
+
+  PMKeyName:
+    Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key"
+    Type: "String"
+
+  PMInstanceType: 
+    Description: "Enter t2.micro or m1.small. Default is t2.micro."
+    Type: "String"
+    AllowedValues: 
+      - "t2.micro"
+      - "m1.small"
+
+  PMPublicSubnets:
+    Description: "Subnets to launch instances into"
+    Type: "List<AWS::EC2::Subnet::Id>"
+
+  PMPrivateSubnets:
+    Description: "Subnets to launch instances into"
+    Type: "List<AWS::EC2::Subnet::Id>"
+
+  PMAPPHostSG:
+    Description: "Select the Security Group to use for the EC2 hosts"
+    Type: "AWS::EC2::SecurityGroup::Id"
+
+  PMWEBDOMAIN:
+    Description: "A reference to the Application domain name"
+    Type: "String"
+
+  PMAPPLoadBalancer:
+    Description: "A reference to the Application Load Balancer"
+    Type: "String"
+
+  PMIAMS3CWInstanceProfile:
+    Description: "A reference to the IamInstanceProfile"
+    Type: "String"
+
+  PMRegionAMI:
+    Description: "A reference to the Region AMI"
+    Type: "String"
+
+  PMASMIN:
+    Description: "A reference to the MinSize"
+    Type: "String"
+
+  PMASMAX:
+    Description: "A reference to the MaxSize"
+    Type: "String"
+
+  PMASDES:
+    Description: "A reference to the DesiredCapacity"
+    Type: "String"
+
+  PMServerEnv:
+    Description: "Environment name, either dev or prod."
+    Type: "String"
+    MinLength: '1'
+    MaxLength: '255'
+    AllowedValues: 
+      - "dev"
+      - "prod"
+    ConstraintDescription: "Specify either 'dev' or 'prod'."
+
+
+####### Condition Setup #######
+Conditions: 
+  UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
+
+####### Resources Setup #######
+Resources:
+
+  # Auto Scaling Launch Configuration
+  LaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: "true"
+      KeyName:
+        Ref: "PMKeyName"
+      ImageId: 
+        Ref: "PMRegionAMI"
+      InstanceType:
+        Ref: "PMInstanceType"
+      IamInstanceProfile:
+        Ref: "PMIAMS3CWInstanceProfile"
+      SecurityGroups:
+      - Ref: "PMAPPHostSG"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y aws-cfn-bootstrap
+          yum update -y
+          yum install htop php-fpm php-gd php-mcrypt php-mysql php-xmlrpc php-cli php-devel telnet git awslogs python-pip aws-cfn-bootstrap nginx -y
+          yum remove nginx -y
+
+          echo "[plugins]
+          cwlogs = cwlogs
+          [default]
+          region = ${AWS::Region}" > /etc/awslogs/awscli.conf
+          service awslogs start
+          chkconfig awslogs on
+
+          mkdir -p /home/www/public_html/${PMWEBDOMAIN}
+          echo "This is App Server <br> <?php phpinfo(); ?>" > /home/www/public_html/${PMWEBDOMAIN}/index.php
+          chown -R nginx:nginx /home/www/public_html/${PMWEBDOMAIN}
+          chmod -R +x /home/www/public_html/${PMWEBDOMAIN}
+
+          sed -ie 's/127.0.0.1:9000/9000/g' /etc/php-fpm.d/www.conf
+          sed -ie 's/listen.allowed_clients/;listen.allowed_clients/g' /etc/php-fpm.d/www.conf
+          sed -ie 's/user = apache/user = nginx/g' /etc/php-fpm.d/www.conf
+          sed -ie 's/group = apache/group = nginx/g' /etc/php-fpm.d/www.conf
+
+          chkconfig php-fpm on
+          service php-fpm start
+
+          /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleAPP}"  > /tmp/userdata.log
+
+  WaitHandleAPP:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  WaitCondition:
+    Type: "AWS::CloudFormation::WaitCondition"
+    Properties:
+      Handle: !Ref "WaitHandleAPP"
+      Timeout: '600'
+
+  # Auto Scaling Group Basic Setup
+  AppScalingGroup: 
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      MinSize: !Ref "PMASMIN"
+      MaxSize: !Ref "PMASMAX"
+      DesiredCapacity: !Ref "PMASDES"
+      LaunchConfigurationName:
+        Ref: "LaunchConfiguration"
+      VPCZoneIdentifier: !If [ "UseProdEnv", !Ref "PMPrivateSubnets", !Ref "PMPublicSubnets" ]
+      LoadBalancerNames:
+      - Ref: "PMAPPLoadBalancer"
+      HealthCheckGracePeriod: "300"
+      HealthCheckType: "ELB"
+      Tags:
+      - Key: "Name"
+        Value: !Sub "${PMServerEnv}-APPserver"
+        PropagateAtLaunch: 'true'
+
+  # Auto ScalingUp Policy - Basic Setup
+  APPServerScaleUpPolicy:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AdjustmentType: "ChangeInCapacity"
+      AutoScalingGroupName:
+        Ref: "AppScalingGroup"
+      Cooldown: '300'
+      ScalingAdjustment: '1'
+
+  # Auto ScalingDown Policy - Basic Setup
+  APPServerScaleDownPolicy:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AdjustmentType: "ChangeInCapacity"
+      AutoScalingGroupName:
+        Ref: "AppScalingGroup"
+      Cooldown: '300'
+      ScalingAdjustment: '-1'
+      
+
+Outputs:
+
+  AppScalingGroup: 
+    Description: "Auto Scaling Group Reference ID"
+    Value: !Ref "AppScalingGroup"
+
+  APPServerScaleUpPolicy: 
+    Description: "Auto Scaling Up Policy Reference ID"
+    Value: !Ref "APPServerScaleUpPolicy"
+
+  APPServerScaleDownPolicy: 
+    Description: "Auto Scaling Down Policy Reference ID"
+    Value: !Ref "APPServerScaleDownPolicy"
+
+
