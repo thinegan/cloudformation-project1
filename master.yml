@@ -88,6 +88,7 @@ Mappings:
       # AStorage - The storage class to which you want the object to transition.
       AStorage: "GLACIER"
       # Update with your own cert ARN HERE!
+      # Assuming you have already upload to AWS Certificate Manager
       CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
 
     us-east-2:
@@ -198,6 +199,18 @@ Resources:
         PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
 
+  MyWEBELB:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-elb-webserver.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMDomain1CertARN: !FindInMap ["RegionMap", !Ref "AWS::Region", "CertARN"]
+        PMWEBELBSG: !GetAtt "MySecurityGroup.Outputs.WEBELBSG"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
+        PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
 
 
 
