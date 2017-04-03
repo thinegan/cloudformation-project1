@@ -50,7 +50,7 @@ Resources:
       AlarmActions:
       - Ref: "PMWebServerScaleUpPolicy"
       Dimensions:
-      - Name: "WebScalingGroupName"
+      - Name: "AutoScalingGroupName"
         Value:
           Ref: "PMWebScalingGroup"
       ComparisonOperator: "GreaterThanThreshold"
@@ -69,7 +69,7 @@ Resources:
       AlarmActions:
       - Ref: "PMWebServerScaleDownPolicy"
       Dimensions:
-      - Name: "WebScalingGroupName"
+      - Name: "AutoScalingGroupName"
         Value:
           Ref: "PMWebScalingGroup"
       ComparisonOperator: "GreaterThanThreshold"
@@ -88,7 +88,7 @@ Resources:
       AlarmActions:
       - Ref: "PMAPPServerScaleUpPolicy"
       Dimensions:
-      - Name: "AppScalingGroupName"
+      - Name: "AutoScalingGroupName"
         Value:
           Ref: "PMAppScalingGroup"
       ComparisonOperator: "GreaterThanThreshold"
@@ -107,7 +107,7 @@ Resources:
       AlarmActions:
       - Ref: "PMAPPServerScaleDownPolicy"
       Dimensions:
-      - Name: "AppScalingGroupName"
+      - Name: "AutoScalingGroupName"
         Value:
           Ref: "PMAppScalingGroup"
       ComparisonOperator: "GreaterThanThreshold"

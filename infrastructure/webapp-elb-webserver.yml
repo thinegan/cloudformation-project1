@@ -54,11 +54,11 @@ Resources:
         S3BucketName: !Ref "PMS3Logging"
         S3BucketPrefix: "ELBLogs"
       HealthCheck:
-        HealthyThreshold: '4'
+        HealthyThreshold: '6'
         Interval: '30'
         Target: "HTTP:80/"
         Timeout: '5'
-        UnhealthyThreshold: '6'
+        UnhealthyThreshold: '8'
       LoadBalancerName: !Sub "${PMServerEnv}-WebELB"
       Listeners:
       - InstancePort: '80'
