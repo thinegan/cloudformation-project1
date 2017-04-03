@@ -245,6 +245,16 @@ Resources:
         PMAPPServerScaleUpPolicy: !GetAtt "MyAPPAutoScaling.Outputs.APPServerScaleUpPolicy"
         PMAPPServerScaleDownPolicy: !GetAtt "MyAPPAutoScaling.Outputs.APPServerScaleDownPolicy"
 
+  MyDNS:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-route53.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
+        PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+
 
 Outputs:
   Webserver:
@@ -253,7 +263,7 @@ Outputs:
       Fn::Join:
         - ''
         - - "http://"
-          - !GetAtt "MyWEBELB.Outputs.WEBLoadBalancerUrl"
+          - !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
           - "/"
 
 

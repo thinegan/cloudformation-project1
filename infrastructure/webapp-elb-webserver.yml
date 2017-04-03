@@ -123,9 +123,13 @@ Outputs:
     Description: "A reference to the Web Load Balancer"
     Value: !Ref "WEBLoadBalancer"
 
-  WEBLoadBalancerUrl:
+  WEBLBDNSName:
     Description: "The URL of the Web Load Balancer"
     Value: !GetAtt "WEBLoadBalancer.DNSName"
+
+  WEBLBHostedZoneId:
+    Description: "The CanonicalHostedZoneNameID of the Web Load Balancer"
+    Value: !GetAtt "WEBLoadBalancer.CanonicalHostedZoneNameID"
 
 
 
