@@ -125,11 +125,19 @@ Resources:
         PMDomain1CertARN: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
         PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
 
-
-
-
-
-
+  MyVPC:
+    Type: "AWS::CloudFormation::Stack"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-vpc.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMVpcCIDR: "10.0.0.0/16"
+        PMPublicSubnet1CIDR: "10.0.1.0/24"
+        PMPublicSubnet2CIDR: "10.0.2.0/24"
+        PMPrivateSubnet1CIDR: "10.0.3.0/24"
+        PMPrivateSubnet2CIDR: "10.0.4.0/24"
+        PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
 
 
