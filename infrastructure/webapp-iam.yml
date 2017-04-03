@@ -1,17 +1,16 @@
-# Note, this is a basic use of Cloudformation with disregard for Security Group Access
-# You should always update Security Group Access with your own IP Address to ensure your instances security.
+# Note: Policy to Allow EC2 instance full access to S3 & CloudWatch,
+# Policy to Allow EC2 VPC Logs to CloudWatch
 #
-# How to validate template
-# aws cloudformation validate-template --template-body file:////path//cloudformation//Nested//security-group.yml
 ---
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
     Policy to Allow EC2 instance full access to S3 & CloudWatch.
     Policy to Allow EC2 VPC Logs to CloudWatch
 
+
 Resources:
 
-  S3CWAccess:
+  IAMS3CW:
     Type: "AWS::IAM::Role"
     Properties:
       ManagedPolicyArns: 
@@ -31,16 +30,16 @@ Resources:
 
   # AWS::IAM::InstanceProfile
   # Creates an AWS Identity and Access Management (IAM) Instance Profile that can be used with IAM Roles for EC2 Instances.
-  S3CWAccessInstanceProfile: 
+  IAMS3CWInstanceProfile: 
     Type: "AWS::IAM::InstanceProfile"
     Properties: 
       Path: "/"
       Roles: 
         - 
-          Ref: "S3CWAccess"
+          Ref: "IAMS3CW"
 
 
-  VPCLogAccess:
+  IAMVPCLog:
     Type: "AWS::IAM::Role"
     Properties:
       # Update Inline or Custom Policy
@@ -73,28 +72,30 @@ Resources:
 
   # AWS::IAM::InstanceProfile
   # Creates an AWS Identity and Access Management (IAM) Instance Profile that can be used with IAM Roles for EC2 Instances.
-  VPCLogAccessInstanceProfile: 
+  IAMVPCLogInstanceProfile: 
     Type: "AWS::IAM::InstanceProfile"
     Properties: 
       Path: "/"
       Roles: 
         - 
-          Ref: "VPCLogAccess"
+          Ref: "IAMVPCLog"
+
 
 Outputs:
-  S3CWAccessInstanceProfile:
-    Description: "Policy to Allow EC2 instance full access to S3 & CloudWatch"
-    Value: !Ref "S3CWAccessInstanceProfile"
 
-  VPCLogAccessInstanceProfile:
+  IAMS3CWInstanceProfile:
+    Description: "Policy to Allow EC2 instance full access to S3 & CloudWatch"
+    Value: !Ref "IAMS3CWInstanceProfile"
+
+  IAMVPCLogInstanceProfile:
     Description: "Policy to Allow EC2 VPC Logs to CloudWatch"
-    Value: !Ref "VPCLogAccessInstanceProfile"
+    Value: !Ref "IAMVPCLogInstanceProfile"
     
   VPCFlowLogRoleArn:
     Description: "Arn VPC Logs to CloudWatch"
     Value:
       Fn::GetAtt:
-      - "VPCLogAccess"
+      - "IAMVPCLog"
       - "Arn"
 
 

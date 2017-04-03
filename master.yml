@@ -21,9 +21,10 @@ Description: >
     Author: Thinegan Ratnam <thinegan@thinegan.com>
 
 ###############################################################################################################
+
 Parameters: 
 
-  PMOfficeIP:
+  PMOWNIP:
     Default: "0.0.0.0/0"
     Description: "Update this with your own office/home public ip address"
     Type: "String"
@@ -40,6 +41,7 @@ Parameters:
     ConstraintDescription: "Specify either 'dev' or 'prod'."
 
 ###############################################################################################################
+#
 # For any additional region & Env, you can add by yourself below.
 Mappings:
   EnvMap:
@@ -69,7 +71,7 @@ Mappings:
       AMI: "ami-0b33d91d"
       # AStorage - The storage class to which you want the object to transition.
       AStorage: "GLACIER"
-      # Update your own cert ARN HERE!
+      # Update with your own cert ARN HERE!
       CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
 
     us-east-2:
@@ -103,9 +105,10 @@ Mappings:
       CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/4696461e-df6b-4000-963b-68c1628f0bac"
 
 ###############################################################################################################
+
 Resources:
 
-  MyRoleAccess:
+  MyIAMRole:
     Type: "AWS::CloudFormation::Stack"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-iam.yml"
