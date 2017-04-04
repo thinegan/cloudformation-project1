@@ -139,9 +139,6 @@ Resources:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-s3bucket.yml"
       TimeoutInMinutes: '5'
       Parameters:
-        # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
-        # ACM certificate needs to be created in us-east-1 when used together with CloudFront. 
-        PMDomain1CertARN: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
         PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
 
   MyVPC:
@@ -295,6 +292,17 @@ Outputs:
     Value: !Ref "PMServerEnv"
     Export:
       Name: "Export-PMServerEnv"
+
+  # Own Certs
+  # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
+  # Error : The specified SSL certificate doesn't exist, isn't valid, or doesn't include a valid certificate chain.
+  # But the ACM certificate needs to be created in us-east-1 when used together with CloudFront. 
+  # So one possible solution was to create the CloudFormation stack in us-east-1. Lesson learned! :)
+  PMDomain1CertARN:
+    Description: "A reference to SSL Certificate ARN of the region"
+    Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
+    Export:
+      Name: "Export-PMDomain1CertARN"
 
 
 

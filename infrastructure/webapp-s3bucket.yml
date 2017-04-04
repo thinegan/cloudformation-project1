@@ -18,12 +18,6 @@ Parameters:
     Description: "A reference to the Region Archive Storage"
     Type: "String"
 
-  # Assuming you have already upload to AWS Certificate Manager
-  PMDomain1CertARN:
-    Description: "ARN for my domain name"
-    Type: "String"
-
-
 Resources:
 
   ############################################################################
@@ -141,5 +135,11 @@ Outputs:
     Value: !Ref "S3CloudFront"
     Export:
       Name: "Export-S3CloudFront"
+
+  S3CloudFrontDN:
+    Description: "S3 Webhosting Bucket Name"
+    Value: !GetAtt "S3CloudFront.DomainName"
+    Export:
+      Name: "Export-S3CloudFrontDN"
 
 
