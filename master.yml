@@ -203,6 +203,8 @@ Resources:
 
   MyWEBELB:
     Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MyAPPAutoScaling"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-elb-webserver.yml"
       TimeoutInMinutes: '5'
@@ -216,6 +218,8 @@ Resources:
 
   MyWEBAutoScaling:
     Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MyWEBELB"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-webserver.yml"
       TimeoutInMinutes: '5'
@@ -236,6 +240,8 @@ Resources:
 
   MyCloudWatch:
     Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MyWEBAutoScaling"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-cloudwatch.yml"
       TimeoutInMinutes: '5'
@@ -249,6 +255,8 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MyWEBAutoScaling"
     Properties:
       TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-route53.yml"
       TimeoutInMinutes: '5'
