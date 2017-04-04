@@ -1,0 +1,83 @@
+# Note, Isolate CDN Deployment due to time consuming ~(30min to complete deploy)
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    CDN Deployment require Webhosting S3 bucket
+
+Parameters:
+
+  PMDOMAIN1:
+    Default: "kasturicookies.com"
+    Description: "Hosted Zone Setup"
+    Type: "String"
+
+  PMAliasDomain:
+    Default: "cdn.kasturicookies.com"
+    Description: "Alias Domain Setup"
+    Type: "String"
+
+  PMExportPrefix:
+    Description: "Name of the export prefix"
+    Type: "String"
+    MinLength: '1'
+    MaxLength: '255'
+    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
+    Default: "Export"
+
+
+Resources:
+
+  MyCDN:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Origins:
+        - Id: "MyOrigin"
+          DomainName:
+            Fn::ImportValue: !Sub "${PMExportPrefix}-S3CloudFrontDN"
+          S3OriginConfig: {}
+        Enabled: 'true'
+        Aliases:
+        - !Ref "PMAliasDomain"
+        DefaultCacheBehavior:
+          TargetOriginId: "MyOrigin"
+          ForwardedValues:
+            QueryString: 'false'
+          ViewerProtocolPolicy: "allow-all"
+        ViewerCertificate:
+          AcmCertificateArn:
+            Fn::ImportValue: !Sub "${PMExportPrefix}-PMDomain1CertARN"
+          SslSupportMethod: "sni-only"
+        PriceClass: "PriceClass_All"
+
+# Value of property ResourceRecords must be of type List of String
+
+  Route53CDN:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneName: !Sub "${PMDOMAIN1}."
+      Comment: "CNAME CDN Record"
+      RecordSets:
+      - Name: !Sub "${PMAliasDomain}."
+        Type: 'CNAME'
+        TTL: '300'
+        ResourceRecords:
+        - !GetAtt "MyCDN.DomainName"
+
+
+Outputs:
+
+  MyCDN:
+    Description: "CDN Reference Id"
+    Value: !Ref "MyCDN"
+
+  MyCDNUrl:
+    Description: "Static Server Site"
+    Value:
+      Fn::Join:
+        - ''
+        - - "http://"
+          - !Ref "PMAliasDomain"
+          - "/"
+
