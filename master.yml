@@ -169,6 +169,18 @@ Resources:
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
+  MyRDS:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MySecurityGroup"
+    Properties:
+      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-rds.yml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "PMServerEnv"
+        PMRDSSG: !GetAtt "MySecurityGroup.Outputs.RDSSG"
+        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+
   MyAPPELB:
     Type: "AWS::CloudFormation::Stack"
     Properties:
