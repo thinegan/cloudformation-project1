@@ -321,5 +321,7 @@ Outputs:
   RDSSG: 
     Description: "A reference to the security group for RDS"
     Value: !Ref "RDSSG"
+    Export:
+      Name: "Export-RDSSG"
 
 

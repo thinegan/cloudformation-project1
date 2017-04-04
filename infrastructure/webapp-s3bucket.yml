@@ -140,6 +140,6 @@ Outputs:
     Description: "S3 Webhosting Bucket Name"
     Value: !Ref "S3CloudFront"
     Export:
-      Name: "S3CloudFront-BucketName"
+      Name: "Export-S3CloudFront"
 
 

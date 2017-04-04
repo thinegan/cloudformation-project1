@@ -260,6 +260,8 @@ Outputs:
   VPC: 
     Description: "A reference to the created VPC"
     Value: !Ref "VPC"
+    Export:
+      Name: "Export-VPC"
 
   MyNetworkACL: 
     Description: "A reference to the created VPC"
@@ -272,6 +274,8 @@ Outputs:
   PrivateSubnets:
     Description: "A list of the private subnets"
     Value: !Join [ ",", [ !Ref "PrivateSubnet1", !Ref "PrivateSubnet2" ]]
+    Export:
+      Name: "Export-PrivateSubnets"
 
   PublicSubnet1:
     Description: "A reference to the public subnet in the 1st Availability Zone"
@@ -288,4 +292,5 @@ Outputs:
   PrivateSubnet2: 
     Description: "A reference to the private subnet in the 2nd Availability Zone"
     Value: !Ref "PrivateSubnet2"
+
 
