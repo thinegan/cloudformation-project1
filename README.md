@@ -1,17 +1,13 @@
-# Deploying Web Application Architecture with Amazon Web Services
+# Deploying Web Application Architecture with AWS
 
 This reference architecture provides a set of YAML templates for deploying the following AWS services :
- - Amazon IAM
- - Amazon VPC
- - Amazon EC2
- - Amazon ELB
- - Amazon AutoScaling
- - Amazon CloudFront
- - Amazon RDS
- - Amazon S3
- - Amazon Cloudwatch
- - Amazon Route53 
- - Amazon Security Group & NACL
+
+| Amazon IAM | Amazon VPC |
+| Amazon EC2 | Amazon ELB |
+| Amazon AutoScaling | Amazon CloudFront |
+| Amazon RDS | Amazon S3 |
+| Amazon Cloudwatch | Amazon Route53 |
+| Amazon Security Group | Amazon NACL |
 
 ## Prerequisites Notes
 The Cloudformation Security Group IP address is open by default (testing purpose). You should update the Security Group Access with your own IP Address to ensure your instances security.
