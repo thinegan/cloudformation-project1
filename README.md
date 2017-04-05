@@ -2,6 +2,7 @@
 
 This reference architecture provides a set of YAML templates for deploying the following AWS services :
 
+| --- | --- | 
 | Amazon IAM | Amazon VPC |
 | Amazon EC2 | Amazon ELB |
 | Amazon AutoScaling | Amazon CloudFront |
