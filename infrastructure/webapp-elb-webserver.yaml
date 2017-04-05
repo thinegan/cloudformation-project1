@@ -1,4 +1,4 @@
-# Note, This template deploys an Webserver Load Balancer that exposes our Nginx Proxy services.
+# Note, This template deploys a Webserver Load Balancer that exposes our Nginx Proxy services.
 # Service : Nginx Service listen to port 80
 # SSL Termination is at ELB
 #
