@@ -158,11 +158,11 @@ This set of templates deploys the following network design:
 
 | Item | CIDR Range | Usable IPs | Description |
 | --- | --- | --- | --- |
-| VPC | 10.180.0.0/16 | 65,536 | The whole range used for the VPC and all subnets |
-| Public Subnet | 10.180.8.0/21 | 2,041 | The public subnet in the first Availability Zone |
-| Public Subnet | 10.180.16.0/21 | 2,041 | The public subnet in the second Availability Zone |
-| Private Subnet | 10.180.24.0/21 | 2,041 | The private subnet in the first Availability Zone |
-| Private Subnet | 10.180.32.0/21 | 2,041 | The private subnet in the second Availability Zone |
+| VPC | 10.0.0.0/16 | 65,536 | The whole range used for the VPC and all subnets |
+| Public Subnet | 10.0.1.0/24 | 256 | The public subnet in the first Availability Zone |
+| Public Subnet | 10.0.2.0/24 | 256 | The public subnet in the second Availability Zone |
+| Private Subnet | 10.0.3.0/24 | 256 | The private subnet in the first Availability Zone |
+| Private Subnet | 10.0.4.0/24 | 256 | The private subnet in the second Availability Zone |
 
 You can adjust the CIDR ranges used in this section of the [master.yaml](master.yaml) template:
 
@@ -170,46 +170,14 @@ You can adjust the CIDR ranges used in this section of the [master.yaml](master.
 VPC:
   Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub ${TemplateLocation}/infrastructure/vpc.yaml
+      TemplateURL: !Sub ${TemplateLocation}/infrastructure/webapp-vpc.yaml
       Parameters:
-        EnvironmentName:    !Ref AWS::StackName
-        VpcCIDR:            10.180.0.0/16
-        PublicSubnet1CIDR:  10.180.8.0/21
-        PublicSubnet2CIDR:  10.180.16.0/21
-        PrivateSubnet1CIDR: 10.180.24.0/21
-        PrivateSubnet2CIDR: 10.180.32.0/21
-```
-
-### Update an ECS service to a new Docker image version
-
-ECS has the ability to perform rolling upgrades to your ECS services to minimize downtime during deployments. For more information, see [Updating a Service](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/update-service.html).
-
-To update one of your services to a new version, adjust the `Image` parameter in the service template (in [services/*](services/) to point to the new version of your container image. For example, if `1.0.0` was currently deployed and you wanted to update to `1.1.0`, you could update it as follows:
-
-```
-TaskDefinition:
-  Type: AWS::ECS::TaskDefinition
-  Properties:
-    ContainerDefinitions:
-      - Name: your-container
-        Image: registry.example.com/your-container:1.1.0
-```
-
-After you've updated the template, update the deployed CloudFormation stack; CloudFormation and ECS handle the rest. 
-
-To adjust the rollout parameters (min/max number of tasks/containers to keep in service at any time), you need to configure `DeploymentConfiguration` for the ECS service.
-
-For example:
-
-```
-Service: 
-  Type: AWS::ECS::Service
-    Properties: 
-      ...
-      DesiredCount: 4
-      DeploymentConfiguration: 
-        MaximumPercent: 200
-        MinimumHealthyPercent: 50
+        PMServerEnv:          !Ref "PMServerEnv"
+        PMVpcCIDR:            10.0.0.0/16
+        PMPublicSubnet1CIDR:  10.0.1.0/24
+        PMPublicSubnet2CIDR:  10.0.2.0/24
+        PMPrivateSubnet1CIDR: 10.0.3.0/24
+        PMPrivateSubnet2CIDR: 10.0.4.0/24
 ```
 
 ### Add a new item to this list
@@ -218,16 +186,17 @@ If you found yourself wishing this set of frequently asked questions had an answ
 
 ## Contributing
 
-Please [create a new GitHub issue](https://github.com/awslabs/ecs-refarch-cloudformation/issues/new) for any feature requests, bugs, or documentation improvements. 
+Please [create a new GitHub issue](https://github.com/thinegan/cloudformation-project1/issues/new) for any feature requests, bugs, or documentation improvements. 
 
 Where possible, please also [submit a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) for the change. 
 
-## License
+## Author
 
-Copyright 2011-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Thinegan Ratnam
+ - [http://thinegan.com](http://thinegan.com/)
 
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
+## Copyright and License
 
-[http://aws.amazon.com/apache2.0/](http://aws.amazon.com/apache2.0/)
+Copyright 2017 Thinegan Ratnam
 
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Code released under the MIT License.
