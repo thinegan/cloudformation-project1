@@ -47,16 +47,6 @@ Parameters:
       - "t2.micro"
       - "m1.small"
 
-  PMServerEnv:
-    Default: "dev"
-    Description: "Server Environment name, either dev or prod."
-    Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedValues: 
-      - "dev"
-      - "prod"
-    ConstraintDescription: "Specify either 'dev' or 'prod'."
 
 ###############################################################################################################
 #
@@ -200,10 +190,10 @@ Resources:
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMASMIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMIN"]
-        PMASMAX: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMAX"]
-        PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
-        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+        PMASMIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMIN"]
+        PMASMAX: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMAX"]
+        PMASDES: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASDES"]
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
 
   MyWEBELB:
     Type: "AWS::CloudFormation::Stack"
@@ -237,10 +227,10 @@ Resources:
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMAPPLoadBalancerUrl: !GetAtt "MyAPPELB.Outputs.APPLoadBalancerUrl"
-        PMASMIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMIN"]
-        PMASMAX: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASMAX"]
-        PMASDES: !FindInMap ["EnvMap", !Ref "PMServerEnv", "ASDES"]
-        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+        PMASMIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMIN"]
+        PMASMAX: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMAX"]
+        PMASDES: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASDES"]
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
 
   MyCloudWatch:
     Type: "AWS::CloudFormation::Stack"
@@ -267,8 +257,8 @@ Resources:
       Parameters:
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
         PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
-        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
-        PMDOMAIN1: !FindInMap ["EnvMap", !Ref "PMServerEnv", "DOMAIN1"]
+        PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
+        PMDOMAIN1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DOMAIN1"]
 
 
 Outputs:
@@ -279,14 +269,8 @@ Outputs:
       Fn::Join:
         - ''
         - - "http://"
-          - !FindInMap ["EnvMap", !Ref "PMServerEnv", "WEBDOMAIN"]
+          - !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
           - "/"
-
-  PMRDSEnv:
-    Description: "A reference to the Server Environment for RDS"
-    Value: !Ref "AWS::StackName"
-    Export:
-      Name: !Sub "${AWS::StackName}-PMServerEnv"
 
   # Own Certs
   # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
