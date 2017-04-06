@@ -13,8 +13,8 @@ Parameters:
     Description: "A reference to the Webserver FQDN domain name"
     Type: "String"
 
-  PMDOMAIN1:
-    Description: "A reference to the Domain name"
+  PMHostedZone:
+    Description: "A reference to the Hosted Zone"
     Type: "String"
 
   PMWEBLBDNSName:
@@ -31,7 +31,7 @@ Resources:
   Route53:
     Type: "AWS::Route53::RecordSetGroup"
     Properties:
-      HostedZoneName: !Sub "${PMDOMAIN1}."
+      HostedZoneName: !Sub "${PMHostedZone}."
       Comment: "Zone apex alias targeted to myELB LoadBalancer."
       RecordSets:
       - Name: !Sub "${PMWEBDOMAIN}."

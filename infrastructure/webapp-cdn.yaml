@@ -5,27 +5,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: >
     CDN Deployment require Webhosting S3 bucket
 
-Parameters:
-
-  PMDOMAIN1:
-    Default: "kasturicookies.com"
-    Description: "Hosted Zone Setup"
-    Type: "String"
-
-  PMAliasDomain:
-    Default: "cdn.kasturicookies.com"
-    Description: "Alias Domain Setup"
-    Type: "String"
-
-  PMExportPrefix:
-    Description: "Name of the export prefix"
-    Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedPattern: "^[a-zA-Z][-a-zA-Z0-9]*$"
-    Default: "Export"
-
-
 Resources:
 
   MyCDN:
@@ -35,11 +14,11 @@ Resources:
         Origins:
         - Id: "MyOrigin"
           DomainName:
-            Fn::ImportValue: !Sub "${PMExportPrefix}-S3CloudFrontDN"
+            Fn::ImportValue: !Sub "${AWS::StackName}-S3CloudFrontDN"
           S3OriginConfig: {}
         Enabled: 'true'
         Aliases:
-        - !Ref "PMAliasDomain"
+        - Fn::ImportValue: !Sub "${AWS::StackName}-PMCDNDOMAIN"
         DefaultCacheBehavior:
           TargetOriginId: "MyOrigin"
           ForwardedValues:
@@ -47,19 +26,25 @@ Resources:
           ViewerProtocolPolicy: "allow-all"
         ViewerCertificate:
           AcmCertificateArn:
-            Fn::ImportValue: !Sub "${PMExportPrefix}-PMDomain1CertARN"
+            Fn::ImportValue: !Sub "${AWS::StackName}-PMDomain1CertARN"
           SslSupportMethod: "sni-only"
         PriceClass: "PriceClass_All"
-
-# Value of property ResourceRecords must be of type List of String
 
   Route53CDN:
     Type: "AWS::Route53::RecordSetGroup"
     Properties:
-      HostedZoneName: !Sub "${PMDOMAIN1}."
+      HostedZoneName:
+          Fn::Join:
+            - ''
+            - - Fn::ImportValue: !Sub "${AWS::StackName}-PMHostedZone"
+              - "."
       Comment: "CNAME CDN Record"
       RecordSets:
-      - Name: !Sub "${PMAliasDomain}."
+      - Name:
+          Fn::Join:
+            - ''
+            - - Fn::ImportValue: !Sub "${AWS::StackName}-PMCDNDOMAIN"
+              - "."
         Type: 'CNAME'
         TTL: '300'
         ResourceRecords:
@@ -78,6 +63,6 @@ Outputs:
       Fn::Join:
         - ''
         - - "http://"
-          - !Ref "PMAliasDomain"
+          - Fn::ImportValue: !Sub "${AWS::StackName}-PMCDNDOMAIN"
           - "/"
 

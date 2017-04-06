@@ -39,6 +39,11 @@ Parameters:
     Description: "Enter an existing S3 Cloudformation Bucket."
     Type: "String"
 
+  PMHostedZone:
+    Default: "kasturicookies.com"
+    Description: "Enter an existing Hosted Zone."
+    Type: "String"
+
   PMInstanceType: 
     Description: "Enter t2.micro or m1.small. Default is t2.micro."
     Type: "String"
@@ -55,18 +60,18 @@ Mappings:
   EnvMap:
 
     dev:
-      ASMIN: '1'
-      ASMAX: '1'
-      ASDES: '1'
+      ASMIN: '2'
+      ASMAX: '2'
+      ASDES: '2'
       WEBDOMAIN: "devel.kasturicookies.com"
-      DOMAIN1: "kasturicookies.com"
+      CDNDOMAIN: "static.kasturicookies.com"
 
     prod:
       ASMIN: '2'
       ASMAX: '4'
       ASDES: '2'
       WEBDOMAIN: "www.kasturicookies.com"
-      DOMAIN1: "kasturicookies.com"
+      CDNDOMAIN: "cdn.kasturicookies.com"
 
   RegionMap:
     us-east-1:
@@ -124,6 +129,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-s3bucket.yaml"
       TimeoutInMinutes: '5'
       Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
         PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
 
   MyVPC:
@@ -258,7 +264,7 @@ Resources:
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
         PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
-        PMDOMAIN1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DOMAIN1"]
+        PMHostedZone: !Ref "PMHostedZone"
 
 
 Outputs:
@@ -281,7 +287,19 @@ Outputs:
     Description: "A reference to SSL Certificate ARN of the region"
     Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
     Export:
-      Name: !Sub "${AWS::StackName}-PMDomain1CertARN"
+      Name: !Sub "${AWS::StackName}CDN-PMDomain1CertARN"
+
+  PMHostedZone:
+    Description: "A reference to SSL Certificate ARN of the region"
+    Value: !Ref "PMHostedZone"
+    Export:
+      Name: !Sub "${AWS::StackName}CDN-PMHostedZone"
+
+  PMCDNDOMAIN:
+    Description: "A reference to SSL Certificate ARN of the region"
+    Value: !FindInMap ["EnvMap", !Ref "AWS::StackName", "CDNDOMAIN"]
+    Export:
+      Name: !Sub "${AWS::StackName}CDN-PMCDNDOMAIN"
 
 
 

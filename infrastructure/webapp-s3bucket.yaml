@@ -18,6 +18,11 @@ Parameters:
     Description: "A reference to the Region Archive Storage"
     Type: "String"
 
+  PMServerEnv:
+    Description: "Environment name, either dev or prod."
+    Type: "String"
+
+
 Resources:
 
   ############################################################################
@@ -130,16 +135,10 @@ Outputs:
     Description: "S3 Logging Bucket Name"
     Value: !Ref "S3Logging"
 
-  S3CloudFront:
-    Description: "S3 Webhosting Bucket Name"
-    Value: !Ref "S3CloudFront"
-    Export:
-      Name: "Export-S3CloudFront"
-
   S3CloudFrontDN:
     Description: "S3 Webhosting Bucket Name"
     Value: !GetAtt "S3CloudFront.DomainName"
     Export:
-      Name: "Export-S3CloudFrontDN"
+      Name: !Sub "${PMServerEnv}CDN-S3CloudFrontDN"
 
 
