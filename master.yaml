@@ -34,6 +34,11 @@ Parameters:
     Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key."
     Type: "String" 
 
+  PMTemplateURL:
+    Default: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1"
+    Description: "Enter an existing S3 Cloudformation Bucket."
+    Type: "String"
+
   PMInstanceType: 
     Description: "Enter t2.micro or m1.small. Default is t2.micro."
     Type: "String"
@@ -130,13 +135,13 @@ Resources:
   MyIAMRole:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-iam.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-iam.yaml"
       TimeoutInMinutes: '5'
 
   MyS3Bucket:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-s3bucket.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-s3bucket.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
@@ -144,7 +149,7 @@ Resources:
   MyVPC:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-vpc.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-vpc.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -158,7 +163,7 @@ Resources:
   MySecurityGroup:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-securitygroup.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-securitygroup.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -171,7 +176,7 @@ Resources:
     DependsOn:
     - "MySecurityGroup"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-rds.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -181,7 +186,7 @@ Resources:
   MyAPPELB:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-elb-appserver.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-elb-appserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -193,7 +198,7 @@ Resources:
   MyAPPAutoScaling:
     Type: "AWS::CloudFormation::Stack"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-appserver.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-autoscaling-appserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -215,7 +220,7 @@ Resources:
     DependsOn:
     - "MyAPPAutoScaling"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-elb-webserver.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-elb-webserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -230,7 +235,7 @@ Resources:
     DependsOn:
     - "MyWEBELB"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-autoscaling-webserver.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-autoscaling-webserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "PMServerEnv"
@@ -252,7 +257,7 @@ Resources:
     DependsOn:
     - "MyWEBAutoScaling"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-cloudwatch.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-cloudwatch.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMWebScalingGroup: !GetAtt "MyWEBAutoScaling.Outputs.WebScalingGroup"
@@ -267,7 +272,7 @@ Resources:
     DependsOn:
     - "MyWEBAutoScaling"
     Properties:
-      TemplateURL: "https://s3-ap-southeast-1.amazonaws.com/cf-templates-19sg5y0d6d084-ap-southeast-1/webapp-route53.yaml"
+      TemplateURL: !Sub "${PMTemplateURL}/webapp-route53.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
