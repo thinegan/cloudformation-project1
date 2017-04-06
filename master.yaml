@@ -78,16 +78,6 @@ Mappings:
       WEBDOMAIN: "www.kasturicookies.com"
       DOMAIN1: "kasturicookies.com"
 
-  # Mapping Supports for the following Regions & Service Environment
-  #
-  # US East (N. Virginia)     = us-east-1
-  # US East (Ohio)            = us-east-2
-  # US West (N. California)   = us-west-1
-  # US West (Oregon)          = us-west-2
-  # Asia Pacific (Tokyo)      = ap-northeast-1
-  # Asia Pacific (Singapore)  = ap-southeast-1
-  # Asia Pacific (Sydney)     = ap-southeast-2
-
   RegionMap:
     us-east-1:
       # AMI Instance - Amazon Linux AMI 2016.09.1 (HVM), SSD Volume Type - ami-dc9339bf (Free tier eligible)
@@ -152,7 +142,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-vpc.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMVpcCIDR: "10.0.0.0/16"
         PMPublicSubnet1CIDR: "10.0.1.0/24"
         PMPublicSubnet2CIDR: "10.0.2.0/24"
@@ -294,9 +284,9 @@ Outputs:
 
   PMRDSEnv:
     Description: "A reference to the Server Environment for RDS"
-    Value: !Ref "PMServerEnv"
+    Value: !Ref "AWS::StackName"
     Export:
-      Name: "Export-PMServerEnv"
+      Name: !Sub "${AWS::StackName}-PMServerEnv"
 
   # Own Certs
   # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/

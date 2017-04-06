@@ -53,7 +53,7 @@ Parameters:
 ####### Condition Setup #######
 
 Conditions: 
-  UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
+  UseProdEnv: !Equals [ !Sub "${PMServerEnv}", "prod" ]
 
 
 Resources:
@@ -65,8 +65,7 @@ Resources:
       CidrBlock: !Ref "PMVpcCIDR"
       Tags:
       - Key: "Name"
-        Value: "MyVPC"
-
+        Value: !Sub "${PMServerEnv}-MyVPC"
 
   VPCFlowLog:
     Type: "AWS::EC2::FlowLog"
@@ -87,7 +86,7 @@ Resources:
       MapPublicIpOnLaunch: "True"
       Tags:
       - Key: "Name"
-        Value: !Sub "${PMPublicSubnet1CIDR}-PublicSubnet1"
+        Value: !Sub "${PMServerEnv}-${PMPublicSubnet1CIDR}-PublicSubnet1"
 
   PublicSubnet2:
     Type: "AWS::EC2::Subnet"
@@ -98,7 +97,7 @@ Resources:
       MapPublicIpOnLaunch: "True"
       Tags:
       - Key: "Name"
-        Value: !Sub "${PMPublicSubnet2CIDR}-PublicSubnet2"
+        Value: !Sub "${PMServerEnv}-${PMPublicSubnet2CIDR}-PublicSubnet2"
 
 ####### Create Private Subnet #######
   PrivateSubnet1:
@@ -109,7 +108,7 @@ Resources:
       AvailabilityZone: !Select [ '0', !GetAZs ]
       Tags:
       - Key: "Name"
-        Value: !Sub "${PMPrivateSubnet1CIDR}-PrivateSubnet1"
+        Value: !Sub "${PMServerEnv}-${PMPrivateSubnet1CIDR}-PrivateSubnet1"
 
   PrivateSubnet2:
     Type: "AWS::EC2::Subnet"
@@ -119,7 +118,7 @@ Resources:
       AvailabilityZone: !Select [ '1', !GetAZs ]
       Tags:
       - Key: "Name"
-        Value: !Sub "${PMPrivateSubnet2CIDR}-PrivateSubnet2"
+        Value: !Sub "${PMServerEnv}-${PMPrivateSubnet2CIDR}-PrivateSubnet2"
 
 ####### Create Internet Gateway #######
   MyInternetGateway:
@@ -127,7 +126,7 @@ Resources:
     Properties:
       Tags:
       - Key: "Name"
-        Value: "MyIGW"
+        Value: !Sub "${PMServerEnv}-MyIGW"
 
 ####### Attach Internet Gateway to VPC #######
   GatewayToInternet:
@@ -143,7 +142,7 @@ Resources:
       VpcId: !Ref "VPC"
       Tags:
       - Key: "Name"
-        Value: "MyPublicRoute"
+        Value: !Sub "${PMServerEnv}-MyPublicRoute"
 
 ####### Create Private Route Table #######
   MyPrivateRouteTable:
@@ -152,7 +151,7 @@ Resources:
       VpcId: !Ref "VPC"
       Tags:
       - Key: "Name"
-        Value: "MyPrivateRoute"
+        Value: !Sub "${PMServerEnv}-MyPrivateRoute"
 
 ####### Route-out Public Route Table to Internet Gateway (Internet connection)  #######
   MyPublicRouteIGW:
@@ -226,7 +225,7 @@ Resources:
       VpcId: !Ref "VPC"
       Tags:
         - Key: "Name"
-          Value: "MyNetworkACL"
+          Value: !Sub "${PMServerEnv}-MyNetworkACL"
 
 ####### Associate Public Subnet to Network ACL #######
   MyPublicSubnet1NetworkAclAssociation:
@@ -261,7 +260,7 @@ Outputs:
     Description: "A reference to the created VPC"
     Value: !Ref "VPC"
     Export:
-      Name: "Export-VPC"
+      Name: !Sub "${PMServerEnv}-VPC"
 
   MyNetworkACL: 
     Description: "A reference to the created VPC"
@@ -275,7 +274,7 @@ Outputs:
     Description: "A list of the private subnets"
     Value: !Join [ ",", [ !Ref "PrivateSubnet1", !Ref "PrivateSubnet2" ]]
     Export:
-      Name: "Export-PrivateSubnets"
+      Name: !Sub "${PMServerEnv}-PrivateSubnets"
 
   PublicSubnet1:
     Description: "A reference to the public subnet in the 1st Availability Zone"
