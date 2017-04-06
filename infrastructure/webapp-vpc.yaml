@@ -18,12 +18,6 @@ Parameters:
   PMServerEnv:
     Description: "Environment name, either dev or prod."
     Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedValues: 
-      - "dev"
-      - "prod"
-    ConstraintDescription: "Specify either 'dev' or 'prod'."
 
   PMVpcCIDR:
     Description: "Please enter the IP range (CIDR notation) for this VPC"

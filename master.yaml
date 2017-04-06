@@ -156,7 +156,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-securitygroup.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMOWNIP: !Ref "PMOWNIP"
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
@@ -297,7 +297,7 @@ Outputs:
     Description: "A reference to SSL Certificate ARN of the region"
     Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
     Export:
-      Name: "Export-PMDomain1CertARN"
+      Name: !Sub "${AWS::StackName}-PMDomain1CertARN"
 
 
 

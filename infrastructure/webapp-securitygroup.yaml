@@ -25,12 +25,6 @@ Parameters:
   PMServerEnv:
     Description: "Environment name, either dev or prod."
     Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedValues: 
-      - "dev"
-      - "prod"
-    ConstraintDescription: "Specify either 'dev' or 'prod'."
 
 
 Resources:
@@ -318,10 +312,10 @@ Outputs:
     Description: "A reference to the security group for Application ELB"
     Value: !Ref "APPELBSG"
 
-  RDSSG: 
+  RDSSG:
     Description: "A reference to the security group for RDS"
     Value: !Ref "RDSSG"
     Export:
-      Name: "Export-RDSSG"
+      Name: !Sub "${PMServerEnv}-RDSSG"
 
 
