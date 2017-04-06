@@ -169,7 +169,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.RDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
 
@@ -179,7 +179,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-elb-appserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMAPPELBSG: !GetAtt "MySecurityGroup.Outputs.APPELBSG"
         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
@@ -191,7 +191,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-autoscaling-appserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMKeyName: !Ref "PMKeyName"
         PMInstanceType: !Ref "PMInstanceType"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
@@ -213,7 +213,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-elb-webserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMDomain1CertARN: !FindInMap ["RegionMap", !Ref "AWS::Region", "CertARN"]
         PMWEBELBSG: !GetAtt "MySecurityGroup.Outputs.WEBELBSG"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
@@ -228,7 +228,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-autoscaling-webserver.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "PMServerEnv"
+        PMServerEnv: !Ref "AWS::StackName"
         PMKeyName: !Ref "PMKeyName"
         PMInstanceType: !Ref "PMInstanceType"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]

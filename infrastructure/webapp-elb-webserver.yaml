@@ -28,12 +28,6 @@ Parameters:
   PMServerEnv:
     Description: "Environment name, either dev or prod."
     Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedValues: 
-      - "dev"
-      - "prod"
-    ConstraintDescription: "Specify either 'dev' or 'prod'."
 
   PMDomain1CertARN:
     Description: "ARN for my domain name"
@@ -71,10 +65,10 @@ Resources:
         InstanceProtocol: "HTTP"
         SSLCertificateId: !Ref "PMDomain1CertARN"
         PolicyNames:
-        - "MyCustomSSLNegotiationPolicy"
+        - !Sub "${PMServerEnv}-SSLNegotiationPolicy"
       # List aws elb describe-load-balancer-policies
       Policies:
-      - PolicyName: "MyCustomSSLNegotiationPolicy"
+      - PolicyName: !Sub "${PMServerEnv}-SSLNegotiationPolicy"
         PolicyType: "SSLNegotiationPolicyType"
         Attributes:
         - Name: "Server-Defined-Cipher-Order"

@@ -13,12 +13,6 @@ Parameters:
   PMServerEnv:
     Description: "Environment name, either dev or prod."
     Type: "String"
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedValues: 
-      - "dev"
-      - "prod"
-    ConstraintDescription: "Specify either 'dev' or 'prod'."
 
   PMPrivateSubnets:
     Description: "Subnets to launch instances into"
@@ -121,10 +115,10 @@ Resources:
   DbSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties:
-      DBSubnetGroupDescription: "RDS DB subnet group"
+      DBSubnetGroupDescription: !Sub "${PMServerEnv} RDS DB subnet group"
       SubnetIds:
         Ref: "PMPrivateSubnets"
-      
+
 
 Outputs:
 
