@@ -109,11 +109,11 @@ Eg. aws s3 cp --recursive infrastructure/ s3://cf-templates-19sg5y0d6d084-ap-sou
 
 ### Step 1 (~ 20 - 25 minutes)
  - Note :stack-name that can be used are (dev, prod)
- - #/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////<path>//cloudformation-project1//master.yaml
+ - #/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
 
 ### Step 2 (~ 30 - 40 minutes)
  - Note :stack-name that can be used are (devCDN, prodCDN)
- - #/> aws cloudformation create-stack --stack-name devCDN --template-body file:////<path>//cloudformation-project1//infrastructure//webapp-cdn.yaml
+ - #/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
 
 
 ### Adjust the Auto Scaling parameters for ECS hosts and services
