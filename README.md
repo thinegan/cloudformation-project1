@@ -89,7 +89,33 @@ After the CloudFormation templates have been deployed, the [stack outputs](http:
 
 ### Get started and deploy this into my AWS account
 
-You can launch this CloudFormation stack in the US East (N. Virginia) Region in your account:
+You can launch this CloudFormation stack in your account:
+
+Example using AWS CLI Command :
+
+1. First Download this code into your workstation, make your own changes and make the prerequisites updates.
+ - Your AWS account must have one VPC available to be created in the selected region.
+ - Create Amazon EC2 key pair
+ - Install a domain in Route 53.
+ - Install a certificate (in your selected region & also one in us-east-1) 
+
+2. Next install [AWS CLI](aws.amazon.com/cli) in your workstation.
+
+3. Upload the files in the "infrastructure" directory into to your own S3 bucket.
+
+Eg. aws s3 cp --recursive infrastructure/ s3://cf-templates-19sg5y0d6d084-ap-southeast-1/
+
+4. You can run the master.yaml file from your workstation.
+
+Step 1 (~ 20 - 25 minutes)
+Note :stack-name that can be used are (dev, prod)
+#/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////<path>//cloudformation-project1//master.yaml
+
+Step 2 (~ 30 - 40 minutes)
+Note :stack-name that can be used are (devCDN, prodCDN)
+#/> aws cloudformation create-stack --stack-name devCDN --template-body file:////<path>//cloudformation-project1//infrastructure//webapp-cdn.yaml
+
+
 
 [![cloudformation-launch-button](images/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=Production&templateURL=https://s3.amazonaws.com/ecs-refarch-cloudformation/master.yaml)    
 
