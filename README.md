@@ -10,7 +10,7 @@ This reference architecture provides a set of YAML templates for deploying the f
 - Amazon RDS
 - Amazon S3
 - Amazon Cloudwatch
-- Amazon Route53 |
+- Amazon Route53
 - Amazon Security Group & NACL
 
 ## Prerequisites Notes
@@ -107,13 +107,35 @@ Eg. aws s3 cp --recursive infrastructure/ s3://cf-templates-19sg5y0d6d084-ap-sou
 
 4. You can run the master.yaml file from your workstation.
 
-### Step 1 (~ 20 - 25 minutes)
- - Note :stack-name that can be used are (dev, prod)
- - #/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
 
-### Step 2 (~ 30 - 40 minutes)
- - Note :stack-name that can be used are (devCDN, prodCDN)
- - #/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+```
+	*Broken down to 2-step because is too time consuming.
+
+	Step 1 (~ 25 - 35 minutes)
+	- Note :stack-name that can be used are (dev, staging, prod)
+
+	Deploy a Development Environment
+	#/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+
+	Deploy a Staging Environment
+	#/> aws cloudformation create-stack --stack-name staging --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+
+	Deploy a Production Environment
+	#/> aws cloudformation create-stack --stack-name prod --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+
+	Step 2 (~ 35 - 45 minutes)
+	- Note :stack-name that can be used are (devCDN, stagingCDN  prodCDN)
+
+	Deploy a Development Cloudfront Static Content
+	#/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+
+	Deploy a Staging Cloudfront Static Content
+	#/> aws cloudformation create-stack --stack-name stagingCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+
+	Deploy a Production Cloudfront Static Content
+	#/> aws cloudformation create-stack --stack-name prodCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+	
+```
 
 
 ### Adjust the Auto Scaling parameters for ECS hosts and services
