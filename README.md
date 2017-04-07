@@ -109,31 +109,31 @@ Eg. aws s3 cp --recursive infrastructure/ s3://cf-templates-19sg5y0d6d084-ap-sou
 
 
 ```
-	*Broken down to 2-step because is too time consuming.
+Broken down to 2-step because is too time consuming.
 
-	Step 1 (~ 25 - 35 minutes)
-	- Note :stack-name that can be used are (dev, staging, prod)
+Step 1 (~ 25 - 35 minutes)
+- Note :stack-name that can be used are (dev, staging, prod)
 
-	Deploy a Development Environment
-	#/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+Deploy a Development Environment
+#/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
 
-	Deploy a Staging Environment
-	#/> aws cloudformation create-stack --stack-name staging --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+Deploy a Staging Environment
+#/> aws cloudformation create-stack --stack-name staging --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
 
-	Deploy a Production Environment
-	#/> aws cloudformation create-stack --stack-name prod --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+Deploy a Production Environment
+#/> aws cloudformation create-stack --stack-name prod --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
 
-	Step 2 (~ 35 - 45 minutes)
-	- Note :stack-name that can be used are (devCDN, stagingCDN  prodCDN)
+Step 2 (~ 35 - 45 minutes)
+- Note :stack-name that can be used are (devCDN, stagingCDN  prodCDN)
 
-	Deploy a Development Cloudfront Static Content
-	#/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+Deploy a Development Cloudfront Static Content
+#/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
 
-	Deploy a Staging Cloudfront Static Content
-	#/> aws cloudformation create-stack --stack-name stagingCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+Deploy a Staging Cloudfront Static Content
+#/> aws cloudformation create-stack --stack-name stagingCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
 
-	Deploy a Production Cloudfront Static Content
-	#/> aws cloudformation create-stack --stack-name prodCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+Deploy a Production Cloudfront Static Content
+#/> aws cloudformation create-stack --stack-name prodCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
 	
 ```
 
