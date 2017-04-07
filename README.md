@@ -109,7 +109,9 @@ Eg. aws s3 cp --recursive infrastructure/ s3://cf-templates-19sg5y0d6d084-ap-sou
 
 
 ```
-Broken down to 2-step because is too time consuming.
+Broken down to 2-step to avoid too much time consuming and a single process.
+Run step 1 first before running step 2, since step 2 require export variable from step 1.
+If you don't want to use Cloudfront, then you can avoid step 2.
 
 Step 1 (~ 25 - 35 minutes)
 - Note :stack-name that can be used are (dev, staging, prod)
