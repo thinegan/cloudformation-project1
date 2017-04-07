@@ -10,6 +10,15 @@ Description: >
 
 Parameters: 
 
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
+    Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
+
   PMKeyName:
     Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key"
     Type: "String"
@@ -59,10 +68,6 @@ Parameters:
 
   PMASDES:
     Description: "A reference to the DesiredCapacity"
-    Type: "String"
-
-  PMServerEnv:
-    Description: "Environment name, either dev or prod."
     Type: "String"
 
 

@@ -133,10 +133,10 @@ This set of templates deploys the following network design:
 | Item | CIDR Range | Usable IPs | Description |
 | --- | --- | --- | --- |
 | VPC | 10.0.0.0/16 | 65,536 | The whole range used for the VPC and all subnets |
-| Public Subnet 1 | 10.0.1.0/24 | 256 | The public subnet in the first Availability Zone |
-| Public Subnet 2 | 10.0.2.0/24 | 256 | The public subnet in the second Availability Zone |
-| Private Subnet 1 | 10.0.3.0/24 | 256 | The private subnet in the first Availability Zone |
-| Private Subnet 2 | 10.0.4.0/24 | 256 | The private subnet in the second Availability Zone |
+| Public Subnet 1 | 10.0.1.0/24 | 251 | The public subnet in the first Availability Zone |
+| Public Subnet 2 | 10.0.2.0/24 | 251 | The public subnet in the second Availability Zone |
+| Private Subnet 1 | 10.0.3.0/24 | 251 | The private subnet in the first Availability Zone |
+| Private Subnet 2 | 10.0.4.0/24 | 251 | The private subnet in the second Availability Zone |
 
 You can adjust the CIDR ranges used in this section of the [master.yaml](master.yaml) template:
 

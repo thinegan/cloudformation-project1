@@ -5,6 +5,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: >
     CDN Deployment require Webhosting S3 bucket
 
+####### Condition Setup #######
+#Conditions: 
+#  UseProdEnv: !Equals [ !Sub "${AWS::StackName}-PMHostedZone", "prodCDN" ]
+
 Resources:
 
   MyCDN:

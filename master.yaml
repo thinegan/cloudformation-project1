@@ -63,12 +63,19 @@ Mappings:
       ASMIN: '2'
       ASMAX: '2'
       ASDES: '2'
-      WEBDOMAIN: "devel.kasturicookies.com"
+      WEBDOMAIN: "dev.kasturicookies.com"
+      CDNDOMAIN: "devel.kasturicookies.com"
+
+    staging:
+      ASMIN: '2'
+      ASMAX: '2'
+      ASDES: '2'
+      WEBDOMAIN: "staging.kasturicookies.com"
       CDNDOMAIN: "static.kasturicookies.com"
 
     prod:
       ASMIN: '2'
-      ASMAX: '4'
+      ASMAX: '5'
       ASDES: '2'
       WEBDOMAIN: "www.kasturicookies.com"
       CDNDOMAIN: "cdn.kasturicookies.com"
@@ -122,6 +129,8 @@ Resources:
     Properties:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-iam.yaml"
       TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
 
   MyS3Bucket:
     Type: "AWS::CloudFormation::Stack"
@@ -166,6 +175,12 @@ Resources:
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
+        DatabaseUser: "startupadmin"
+        DatabasePassword: "0bee082a464"
+        DatabaseName: !Sub "${AWS::StackName}db"
+        DatabaseSize: '5'
+        DatabaseEngine: "mysql"
+        DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.RDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
 
@@ -261,6 +276,7 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-route53.yaml"
       TimeoutInMinutes: '5'
       Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
         PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]

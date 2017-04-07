@@ -8,6 +8,15 @@ Description: >
 
 Parameters: 
 
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
+    Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
+
   PMAPPELBSG:
     Description: "Select the Security Group to use for the ELB"
     Type: "AWS::EC2::SecurityGroup::Id"
@@ -22,10 +31,6 @@ Parameters:
 
   PMS3Logging:
     Description: "S3 Logging Bucket Name"
-    Type: "String"
-
-  PMServerEnv:
-    Description: "Environment name, either dev or prod."
     Type: "String"
 
 ####### Condition Setup #######

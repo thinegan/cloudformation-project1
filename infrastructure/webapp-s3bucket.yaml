@@ -19,8 +19,13 @@ Parameters:
     Type: "String"
 
   PMServerEnv:
-    Description: "Environment name, either dev or prod."
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
     Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
 
 
 Resources:

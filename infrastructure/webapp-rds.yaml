@@ -11,8 +11,13 @@ Description: >
 Parameters:
 
   PMServerEnv:
-    Description: "Environment name, either dev or prod."
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
     Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
 
   PMPrivateSubnets:
     Description: "Subnets to launch instances into"
@@ -23,7 +28,6 @@ Parameters:
     Type: "AWS::EC2::SecurityGroup::Id"
 
   DatabaseUser:
-    Default: "startupadmin"
     NoEcho: 'true'
     Type: "String"
     Description: "Database admin account name"
@@ -33,7 +37,6 @@ Parameters:
     ConstraintDescription: "Name must begin with a letter and contain only alphanumeric characters."
 
   DatabasePassword:
-    Default: "0bee082a464"
     NoEcho: 'true'
     Type: "String"
     Description: "Database admin account password"
@@ -43,7 +46,6 @@ Parameters:
     ConstraintDescription: "Password must contain only alphanumeric characters."
 
   DatabaseName:
-    Default: "StartupDB"
     Type: "String"
     Description: "Database name"
     MinLength: '1'
@@ -52,7 +54,6 @@ Parameters:
     ConstraintDescription: "Name must begin with a letter and contain only alphanumeric characters."
     
   DatabaseSize:
-    Default: '5'
     Type: "String"
     Description: "Database storage size in gigabytes (GB)"
     MinLength: '1'
@@ -60,7 +61,6 @@ Parameters:
     ConstraintDescription: "Enter a size of at least 5 GB"
     
   DatabaseEngine:
-    Default: "mysql"
     Type: "String"
     Description: "Database engine, MySQL or PostgreSQL"
     ConstraintDescription: "Choose an engine from the drop down"
@@ -69,7 +69,6 @@ Parameters:
       - "postgres"
 
   DatabaseInstanceClass:
-    Default: "db.t2.micro"
     Type: "String"
     Description: "Database instance class, e.g. db.t2.micro (free tier)"
     ConstraintDescription: "Choose an instance class from the drop down"
@@ -125,6 +124,10 @@ Outputs:
   RdsDbId:
     Description: "RDS Database ID"
     Value: !Ref "Database"
+
+  DbName:
+    Description: "RDS Database Name"
+    Value: !Ref "DatabaseName"
 
   RdsDbURL:
     Description: "RDS Database URL"

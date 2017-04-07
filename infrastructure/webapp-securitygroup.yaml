@@ -10,6 +10,15 @@ Description: >
 
 Parameters:
 
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
+    Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
+
   PMVPC:
     Description: "VPC to launch instances into"
     Type: "AWS::EC2::VPC::Id"
@@ -20,10 +29,6 @@ Parameters:
 
   PMOWNIP:
     Description: "Update this with your own office/home public ip address"
-    Type: "String"
-
-  PMServerEnv:
-    Description: "Environment name, either dev or prod."
     Type: "String"
 
 

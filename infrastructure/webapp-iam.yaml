@@ -7,6 +7,16 @@ Description: >
     Policy to Allow EC2 instance full access to S3 & CloudWatch.
     Policy to Allow EC2 VPC Logs to CloudWatch
 
+Parameters: 
+
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Invalid environment name. Choose an environment from the list"
+    Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
 
 Resources:
 
