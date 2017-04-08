@@ -161,9 +161,42 @@ This set of templates deploys the following network design:
 | Private Subnet 1 | 10.0.3.0/24 | 251 | The private subnet in the first Availability Zone |
 | Private Subnet 2 | 10.0.4.0/24 | 251 | The private subnet in the second Availability Zone |
 
-You can adjust the CIDR ranges used in this section of the [master.yaml](master.yaml) template:
+You can adjust the following section of the [master.yaml](master.yaml) template:
 
 ```
+# Update Domain Name
+PMHostedZone:
+	Default: "kasturicookies.com"
+	Description: "Enter an existing Hosted Zone."
+	Type: "String"
+
+# Update Sub-domain
+# Update Auto Scaling parameters (MIN,MAX,Desired)
+dev:
+	ASMIN: '2'
+	ASMAX: '2'
+	ASDES: '2'
+	WEBDOMAIN: "dev.kasturicookies.com"
+	CDNDOMAIN: "devel.kasturicookies.com"
+
+staging:
+	ASMIN: '2'
+	ASMAX: '2'
+	ASDES: '2'
+	WEBDOMAIN: "staging.kasturicookies.com"
+	CDNDOMAIN: "static.kasturicookies.com"
+
+prod:
+	ASMIN: '2'
+	ASMAX: '5'
+	ASDES: '2'
+	WEBDOMAIN: "www.kasturicookies.com"
+	CDNDOMAIN: "cdn.kasturicookies.com"
+
+# Update Uploaded SSL ARN
+CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
+
+# CIDR ranges
 VPC:
   Type: AWS::CloudFormation::Stack
     Properties:
@@ -175,6 +208,23 @@ VPC:
         PMPublicSubnet2CIDR:  10.0.2.0/24
         PMPrivateSubnet1CIDR: 10.0.3.0/24
         PMPrivateSubnet2CIDR: 10.0.4.0/24
+
+# DB Config
+MyRDS:
+	Type: "AWS::CloudFormation::Stack"
+	DependsOn:
+	- "MySecurityGroup"
+	Properties:
+		TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
+		TimeoutInMinutes: '5'
+		Parameters:
+			DatabaseUser: "startupadmin"
+			DatabasePassword: "xxxxxxxx"
+			DatabaseName: !Sub "${AWS::StackName}db"
+			DatabaseSize: '5'
+			DatabaseEngine: "mysql"
+			DatabaseInstanceClass: "db.t2.micro"
+
 ```
 
 ### Add a new item to this list
