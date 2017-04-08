@@ -193,32 +193,32 @@ You can adjust the following section of the [master.yaml](master.yaml) template:
 ```
 # Update Domain Name
 PMHostedZone:
-	Default: "kasturicookies.com"
-	Description: "Enter an existing Hosted Zone."
-	Type: "String"
+  Default: "kasturicookies.com"
+  Description: "Enter an existing Hosted Zone."
+  Type: "String"
 
 # Update Sub-domain
 # Update Auto Scaling parameters (MIN,MAX,Desired)
 dev:
-	ASMIN: '2'
-	ASMAX: '2'
-	ASDES: '2'
-	WEBDOMAIN: "dev.kasturicookies.com"
-	CDNDOMAIN: "devel.kasturicookies.com"
+  ASMIN: '2'
+  ASMAX: '2'
+  ASDES: '2'
+  WEBDOMAIN: "dev.kasturicookies.com"
+  CDNDOMAIN: "devel.kasturicookies.com"
 
 staging:
-	ASMIN: '2'
-	ASMAX: '2'
-	ASDES: '2'
-	WEBDOMAIN: "staging.kasturicookies.com"
-	CDNDOMAIN: "static.kasturicookies.com"
+  ASMIN: '2'
+  ASMAX: '2'
+  ASDES: '2'
+  WEBDOMAIN: "staging.kasturicookies.com"
+  CDNDOMAIN: "static.kasturicookies.com"
 
 prod:
-	ASMIN: '2'
-	ASMAX: '5'
-	ASDES: '2'
-	WEBDOMAIN: "www.kasturicookies.com"
-	CDNDOMAIN: "cdn.kasturicookies.com"
+  ASMIN: '2'
+  ASMAX: '5'
+  ASDES: '2'
+  WEBDOMAIN: "www.kasturicookies.com"
+  CDNDOMAIN: "cdn.kasturicookies.com"
 
 # Update Uploaded SSL ARN
 CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
@@ -238,19 +238,19 @@ VPC:
 
 # DB Config
 MyRDS:
-	Type: "AWS::CloudFormation::Stack"
-	DependsOn:
-	- "MySecurityGroup"
-	Properties:
-		TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
-		TimeoutInMinutes: '5'
-		Parameters:
-			DatabaseUser: "startupadmin"
-			DatabasePassword: "xxxxxxxx"
-			DatabaseName: !Sub "${AWS::StackName}db"
-			DatabaseSize: '5'
-			DatabaseEngine: "mysql"
-			DatabaseInstanceClass: "db.t2.micro"
+  Type: "AWS::CloudFormation::Stack"
+  DependsOn:
+  - "MySecurityGroup"
+  Properties:
+    TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
+    TimeoutInMinutes: '5'
+    Parameters:
+      DatabaseUser: "startupadmin"
+      DatabasePassword: "xxxxxxxx"
+      DatabaseName: !Sub "${AWS::StackName}db"
+      DatabaseSize: '5'
+      DatabaseEngine: "mysql"
+      DatabaseInstanceClass: "db.t2.micro"
 
 ```
 
