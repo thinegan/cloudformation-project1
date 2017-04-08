@@ -17,7 +17,7 @@ Description: >
     - Internet Gateway, with a default route on the public subnets.
     - NAT Gateways (In one Public AZ) and route to private subnets.
 
-    Last Modified: 2nd April 2017
+    Last Modified: 8th April 2017
     Author: Thinegan Ratnam <thinegan@thinegan.com>
 
 ###############################################################################################################
@@ -193,7 +193,6 @@ Resources:
         PMServerEnv: !Ref "AWS::StackName"
         PMAPPELBSG: !GetAtt "MySecurityGroup.Outputs.APPELBSG"
         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
-        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
 
   MyAPPAutoScaling:
@@ -209,7 +208,6 @@ Resources:
         PMAPPHostSG : !GetAtt "MySecurityGroup.Outputs.APPHostSG"
         PMAPPLoadBalancer: !GetAtt "MyAPPELB.Outputs.APPLoadBalancer"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
         PMASMIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMIN"]
         PMASMAX: !FindInMap ["EnvMap", !Ref "AWS::StackName", "ASMAX"]

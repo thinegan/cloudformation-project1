@@ -21,10 +21,6 @@ Parameters:
     Description: "Select the Security Group to use for the ELB"
     Type: "AWS::EC2::SecurityGroup::Id"
 
-  PMPublicSubnets:
-    Description: "Subnets to launch instances into"
-    Type: "List<AWS::EC2::Subnet::Id>"
-
   PMPrivateSubnets:
     Description: "Subnets to launch instances into"
     Type: "List<AWS::EC2::Subnet::Id>"
@@ -32,10 +28,6 @@ Parameters:
   PMS3Logging:
     Description: "S3 Logging Bucket Name"
     Type: "String"
-
-####### Condition Setup #######
-Conditions: 
-  UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
 
 
 ####### Resources Setup #######
@@ -68,7 +60,7 @@ Resources:
       Scheme: "internal"
       SecurityGroups:
       - Ref: "PMAPPELBSG"
-      Subnets: !If [ "UseProdEnv", !Ref "PMPrivateSubnets", !Ref "PMPublicSubnets" ]
+      Subnets: !Ref "PMPrivateSubnets"
 
 # Output LoadBalancer
 Outputs:
