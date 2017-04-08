@@ -276,7 +276,6 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/webapp-route53.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
         PMWEBLBDNSName: !GetAtt "MyWEBELB.Outputs.WEBLBDNSName"
         PMWEBLBHostedZoneId: !GetAtt "MyWEBELB.Outputs.WEBLBHostedZoneId"
         PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]

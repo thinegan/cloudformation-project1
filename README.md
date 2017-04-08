@@ -108,33 +108,60 @@ Example using AWS CLI Command :
 
 
 ```
-Broken down to 2-step to avoid too much time consuming and a single process.
-Run step 1 first before running step 2, since step 2 require export variable from step 1.
-If you don't want to use Cloudfront, then you can avoid step 2.
+Broken down into 2-Stages to avoid too much time consuming and a single process.
+Run Stage1 first before running Stage2, since Stage2 require export variable
+from Stage1. If you don't want to create Cloudfront, then you can avoid Stage2.
 
-Step 1 (~ 25 - 35 minutes)
-- Note :stack-name that can be used are (dev, staging, prod)
+Stage1 (~ 25 - 35 minutes)
+===========================
+To create a environment :
+aws cloudformation create-stack \
+--stack-name <env> \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//master.yaml
 
-Deploy a Development Environment
-#/> aws cloudformation create-stack --stack-name dev --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+To update a environment :
+aws cloudformation update-stack \
+--stack-name <env> \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//master.yaml
 
-Deploy a Staging Environment
-#/> aws cloudformation create-stack --stack-name staging --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+To delete a environment :
+aws cloudformation delete-stack --stack-name <env>
 
-Deploy a Production Environment
-#/> aws cloudformation create-stack --stack-name prod --capabilities=CAPABILITY_IAM --template-body file:////path//cloudformation-project1//master.yaml
+<env> - Note :stack-name that can be used are (dev, staging, prod)
 
-Step 2 (~ 35 - 45 minutes)
-- Note :stack-name that can be used are (devCDN, stagingCDN  prodCDN)
 
-Deploy a Development Cloudfront Static Content
-#/> aws cloudformation create-stack --stack-name devCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+Stage2 (~ 35 - 45 minutes)
+===========================
+To create a environment :
+aws cloudformation create-stack \
+--stack-name <envCDN> \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
 
-Deploy a Staging Cloudfront Static Content
-#/> aws cloudformation create-stack --stack-name stagingCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+To update a environment :
+aws cloudformation update-stack \
+--stack-name <envCDN> \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
 
-Deploy a Production Cloudfront Static Content
-#/> aws cloudformation create-stack --stack-name prodCDN --template-body file:////path//cloudformation-project1//infrastructure//webapp-cdn.yaml
+To delete a environment :
+aws cloudformation delete-stack --stack-name <envCDN>
+
+<envCDN> - Note :stack-name that can be used are (devCDN, stagingCDN, prodCDN)
+
+
+Example :
+aws cloudformation create-stack \
+--stack-name dev \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//master.yaml
+
+aws cloudformation create-stack \
+--stack-name devCDN \
+--capabilities=CAPABILITY_IAM \
+--template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
 	
 ```
 
